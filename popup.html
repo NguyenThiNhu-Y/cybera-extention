@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybera Clone</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="extension-body">
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <button class="icon-button" id="logo-button">
+                    <img src="logo-32x32.png" alt="Cybera" width="22" height="22">
+                </button>
+                <span class="lightning-button">
+                    <span class="lightning-count">100</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="res-icon-small">
+                        <path d="M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11"></path>
+                    </svg>
+                </span>
+                <button class="upgrade-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="res-icon-small">
+                        <path d="M3 8m0 1a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-16a1 1 0 0 1 -1 -1z">
+                        </path>
+                        <path d="M12 8l0 13"></path>
+                        <path d="M19 12v7a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-7"></path>
+                        <path d="M7.5 8a2.5 2.5 0 0 1 0 -5a4.8 8 0 0 1 4.5 5a4.8 8 0 0 1 4.5 -5a2.5 2.5 0 0 1 0 5">
+                        </path>
+                    </svg>
+                    Go Pro!
+                </button>
+            </div>
+            <div class="actions">
+                <button class="icon-button" id="theme-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+                    </svg>
+                    <button class="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 6l6 6l-6 6"></path>
+                        </svg>
+                    </button>
+            </div>
+        </div>
+
+        <div class="model-selection">
+            <div class="dropdown-container">
+                <button class="model-button" id="access-web-button">
+                    <i class="fas fa-globe"></i> Access web: <span id="selected-web-model">Turbo</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu" id="web-model-dropdown">
+                    <div class="dropdown-item" data-value="Turbo">Turbo</div>
+                    <div class="dropdown-item" data-value="Pro">Pro</div>
+                    <div class="dropdown-item" data-value="Plus">Plus</div>
+                </div>
+            </div>
+            <div class="dropdown-container">
+                <button class="model-button" id="gpt-model-button">
+                    <i class="fas fa-bolt"></i> <span id="selected-gpt-model">GPT 4o Mini</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu" id="gpt-model-dropdown">
+                    <div class="dropdown-item" data-value="GPT 4o Mini">GPT 4o Mini</div>
+                    <div class="dropdown-item" data-value="GPT 4">GPT 4</div>
+                    <div class="dropdown-item" data-value="GPT 3.5">GPT 3.5</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features" id="features-container">
+            <button class="feature-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feature-icon">
+                    <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+                    <path d="M3.6 9h16.8"></path>
+                    <path d="M3.6 15h16.8"></path>
+                    <path d="M11.5 3a17 17 0 0 0 0 18"></path>
+                    <path d="M12.5 3a17 17 0 0 1 0 18"></path>
+                </svg>
+                <span class="feature-text">
+                    <span class="text-lg">Chat with this Webpage</span>
+                </span>
+            </button>
+
+            <button class="feature-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feature-icon">
+                    <path d="M6 4m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z"></path>
+                    <path d="M12 2v2"></path>
+                    <path d="M9 12v9"></path>
+                    <path d="M15 12v9"></path>
+                    <path d="M5 16l4 -2"></path>
+                    <path d="M15 14l4 2"></path>
+                    <path d="M9 18h6"></path>
+                    <path d="M10 8v.01"></path>
+                    <path d="M14 8v.01"></path>
+                </svg>
+                <span class="feature-text">
+                    <span class="text-lg">Chatbots</span>
+                </span>
+            </button>
+
+            <button class="feature-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feature-icon">
+                    <path d="M9 7l6 0"></path>
+                    <path d="M9 11l6 0"></path>
+                    <path d="M9 15l4 0"></path>
+                </svg>
+                <span class="feature-text">
+                    <span class="text-lg">Token Analysis Report</span>
+                </span>
+            </button>
+
+            <button class="feature-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feature-icon">
+                    <path d="M20 11a8.1 8.1 0 0 0 -6.986 -6.918a8.095 8.095 0 0 0 -8.019 3.918"></path>
+                    <path d="M4 13a8.1 8.1 0 0 0 15 3"></path>
+                    <path d="M19 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    <path d="M5 8m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                    <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+                </svg>
+                <span class="feature-text">
+                    <span class="text-lg">Website Report</span>
+                </span>
+            </button>
+        </div>
+
+        <div class="chat-container" id="chat-container" style="display: none;">
+            <!-- Chat messages will be added here dynamically -->
+        </div>
+
+        <div class="chat-input">
+            <button class="deep-research-btn" id="deep-research-toggle"></button>
+            <div class="chat-input-container">
+                <div class="relative">
+                    <input type="text" placeholder="">
+                    <div class="placeholder">Start Chatting Now</div>
+                </div>
+                <div class="input-actions"></div>
+            </div>
+            <button class="send-button" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 14l11 -11"></path>
+                    <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+    <script>
+        // Add code to interact with overlay.js
+        
+        // Listen for events from chat buttons in popup
+        document.querySelectorAll('.feature-item').forEach(button => {
+            button.addEventListener('click', function() {
+                // When clicking on a feature-item, send message to current tab to open chat overlay
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    if (tabs[0]?.id) {
+                        chrome.tabs.sendMessage(tabs[0].id, { toggleOverlay: true });
+                        // Close popup after opening overlay
+                        window.close();
+                    }
+                });
+            });
+        });
+        
+        // Check if overlay is already open
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            if (tabs[0]?.id) {
+                chrome.tabs.sendMessage(tabs[0].id, { checkOverlayStatus: true }, function(response) {
+                    if (response && response.isOpen) {
+                        // If overlay is already open, show chat interface in popup
+                        document.getElementById('features-container').style.display = 'none';
+                        document.getElementById('chat-container').style.display = 'block';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
