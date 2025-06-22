@@ -91,44 +91,44 @@ function dataURLToBase64(dataURL) {
 
 function renderMarkdownToHtml(markdown) {
     if (!markdown) return '';
-  
+
     // Escape special HTML to avoid bad HTML injection (basic)
     function escapeHtml(text) {
-      return text.replace(/[&<>"']/g, function (m) {
-        switch (m) {
-          case '&': return '&amp;';
-          case '<': return '&lt;';
-          case '>': return '&gt;';
-          case '"': return '&quot;';
-          case "'": return '&#39;';
-          default: return m;
-        }
-      });
+        return text.replace(/[&<>"']/g, function (m) {
+            switch (m) {
+                case '&': return '&amp;';
+                case '<': return '&lt;';
+                case '>': return '&gt;';
+                case '"': return '&quot;';
+                case "'": return '&#39;';
+                default: return m;
+            }
+        });
     }
-  
+
     let html = escapeHtml(markdown);
-  
+
     // Simple markdown conversions:
-  
+
     // **bold**
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  
+
     // list of - signs
     html = html.replace(/^\s*-\s(.+)$/gm, '<li>$1</li>');
     html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
-  
+
     // line break -> <br>
     html = html.replace(/\n/g, '<br>');
-  
+
     // link [text](url)
     html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-  
+
     // code `code`
     html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-  
+
     return html;
-  }
-  
+}
+
 
 // Base function to process streaming response from all API calls
 function processStreamingResponse(xhr, onThinkChunk, onMessageChunk, onComplete, onError) {
@@ -181,9 +181,11 @@ function processStreamingResponse(xhr, onThinkChunk, onMessageChunk, onComplete,
                     if (currentEvent === 'think') {
                         const json = JSON.parse(currentData);
                         if (json.content && onThinkChunk) {
+                            console.log("json.content ==", json.content)
                             const match = json.content.match(/\*\*(.+?)\*\*(.*)/s);
                             let title = 'Thinking...';
                             let detailsMarkdown = json.content;
+                            let type = json.type
 
                             if (match) {
                                 title = match[1].trim();
@@ -191,11 +193,11 @@ function processStreamingResponse(xhr, onThinkChunk, onMessageChunk, onComplete,
                             }
 
                             // Convert markdown to HTML
-                            let detailsHtml = renderMarkdownToHtml 
-                                ? renderMarkdownToHtml(detailsMarkdown) 
+                            let detailsHtml = renderMarkdownToHtml
+                                ? renderMarkdownToHtml(detailsMarkdown)
                                 : detailsMarkdown; // fallback returns raw markdown if no function
 
-                            onThinkChunk({ title, detailsHtml }, accumulatedContent + '\n' + json.content);
+                            onThinkChunk({ title, detailsHtml, type }, accumulatedContent + '\n' + json.content);
                             accumulatedContent += json.content + '\n';
                         }
                     } else if (currentEvent === 'message') {
@@ -1047,25 +1049,25 @@ function createOverlay(featureName) {
                         thinkWrapper.style.cursor = 'pointer';
                         thinkWrapper.style.color = '#374151'; // màu xám đậm
                         thinkWrapper.style.wordBreak = 'break-word';
-                    
+
                         const titleElement = document.createElement('div');
                         titleElement.style.fontWeight = 'bold';
                         titleElement.textContent = title;
-                    
+
                         const detailsElement = document.createElement('div');
                         detailsElement.innerHTML = detailsHtml;
                         detailsElement.style.display = 'none';
                         detailsElement.style.marginTop = '6px';
                         detailsElement.style.color = '#6b7280';
-                    
+
                         thinkWrapper.addEventListener('click', () => {
                             const isVisible = detailsElement.style.display === 'block';
                             detailsElement.style.display = isVisible ? 'none' : 'block';
                         });
-                    
+
                         thinkWrapper.appendChild(titleElement);
                         thinkWrapper.appendChild(detailsElement);
-                    
+
                         chatContainer.insertBefore(thinkWrapper, botMessage);
                         chatContainer.scrollTop = chatContainer.scrollHeight;
 
@@ -1473,25 +1475,48 @@ function createOverlay(featureName) {
                         thinkWrapper.style.cursor = 'pointer';
                         thinkWrapper.style.color = '#374151'; // màu xám đậm
                         thinkWrapper.style.wordBreak = 'break-word';
-                    
+
                         const titleElement = document.createElement('div');
                         titleElement.style.fontWeight = 'bold';
                         titleElement.textContent = title;
-                    
+
                         const detailsElement = document.createElement('div');
                         detailsElement.innerHTML = detailsHtml;
                         detailsElement.style.display = 'none';
                         detailsElement.style.marginTop = '6px';
                         detailsElement.style.color = '#6b7280';
-                    
+
+                        // Nếu nội dung có chứa link report, thì tạo khung đặc biệt
+                        const reportLinkMatch = detailsHtml.match(/(https?:\/\/[^\s]+)/);
+                        if (reportLinkMatch) {
+                            const link = reportLinkMatch[1];
+                            const reportBox = document.createElement('div');
+                            reportBox.style.padding = '10px';
+                            reportBox.style.background = '#f3f4f6';
+                            reportBox.style.border = '1px solid #d1d5db';
+                            reportBox.style.borderRadius = '6px';
+                            reportBox.style.marginTop = '8px';
+                            reportBox.style.color = '#111827';
+
+                            reportBox.innerHTML = `
+                                <strong>🔍 Đang lấy thông tin từ báo cáo:</strong><br>
+                                <a href="${link}" target="_blank" style="color:#3b82f6;word-break:break-all">${link}</a>
+                            `;
+
+                            detailsElement.appendChild(reportBox);
+                        } else {
+                            // Nếu không có report thì vẫn hiện nội dung gốc
+                            detailsElement.innerHTML = detailsHtml;
+                        }
+
                         thinkWrapper.addEventListener('click', () => {
                             const isVisible = detailsElement.style.display === 'block';
                             detailsElement.style.display = isVisible ? 'none' : 'block';
                         });
-                    
+
                         thinkWrapper.appendChild(titleElement);
                         thinkWrapper.appendChild(detailsElement);
-                    
+
                         chatContainer.insertBefore(thinkWrapper, botMessage);
                         chatContainer.scrollTop = chatContainer.scrollHeight;
 
@@ -1674,42 +1699,72 @@ function createOverlay(featureName) {
 
             callLLMAPIWithFetch(
                 message,
+
                 // onThinkChunk
-                ({ title, detailsHtml }) => {
+                ({ title, detailsHtml, type }) => {
                     const thinkWrapper = document.createElement('div');
-                    thinkWrapper.style.padding = '8px 12px';
-                    thinkWrapper.style.background = '#e5e7eb';
-                    thinkWrapper.style.borderRadius = '8px';
-                    thinkWrapper.style.marginBottom = '8px';
+                    thinkWrapper.classList.add('thinking-temp');
+                    thinkWrapper.style.padding = '10px 14px';
+                    thinkWrapper.style.background = '#f3f4f6';         // nền nhạt hơn, dịu mắt
+                    thinkWrapper.style.borderRadius = '10px';         // bo tròn mềm mại
+                    thinkWrapper.style.marginBottom = '10px';
                     thinkWrapper.style.maxWidth = '70%';
-                    thinkWrapper.style.cursor = 'pointer';
-                    thinkWrapper.style.color = '#374151'; // màu xám đậm
+                    thinkWrapper.style.color = '#374151';              // text màu xám đậm chuẩn
                     thinkWrapper.style.wordBreak = 'break-word';
-                
+                    thinkWrapper.style.fontSize = '14px';
+                    thinkWrapper.style.lineHeight = '1.5';
+
                     const titleElement = document.createElement('div');
-                    titleElement.style.fontWeight = 'bold';
+                    titleElement.style.fontWeight = '600';
+                    titleElement.style.marginBottom = '6px';
                     titleElement.textContent = title;
-                
-                    const detailsElement = document.createElement('div');
-                    detailsElement.innerHTML = detailsHtml;
-                    detailsElement.style.display = 'none';
-                    detailsElement.style.marginTop = '6px';
-                    detailsElement.style.color = '#6b7280';
-                
-                    thinkWrapper.addEventListener('click', () => {
-                        const isVisible = detailsElement.style.display === 'block';
-                        detailsElement.style.display = isVisible ? 'none' : 'block';
-                    });
-                
-                    thinkWrapper.appendChild(titleElement);
-                    thinkWrapper.appendChild(detailsElement);
-                
+
+                    if (type === "url") {
+                        const link = detailsHtml;
+                        const token = link.split("/").at(-1);
+                        titleElement.textContent = `🔍 Getting information from report: ${token}`;
+
+                        const reportBox = document.createElement('div');
+                        reportBox.style.padding = '12px';
+                        reportBox.style.background = '#ffffff';
+                        reportBox.style.border = '1px solid #d1d5db';
+                        reportBox.style.borderRadius = '8px';
+                        reportBox.style.marginTop = '6px';
+                        reportBox.style.color = '#111827';
+                        reportBox.style.fontSize = '13px';
+                        reportBox.style.wordBreak = 'break-word';
+
+                        reportBox.innerHTML = `
+        <a href="${link}" target="_blank" style="color:#3b82f6; text-decoration: underline; word-break: break-word;">
+            ${link}
+        </a>
+    `;
+
+                        thinkWrapper.appendChild(titleElement);
+                        thinkWrapper.appendChild(reportBox);
+                    } else {
+                        const detailsElement = document.createElement('div');
+                        detailsElement.innerHTML = detailsHtml;
+                        detailsElement.style.display = 'block';
+                        detailsElement.style.marginTop = '6px';
+                        detailsElement.style.color = '#4b5563';
+                        detailsElement.style.background = '#ffffff';
+                        detailsElement.style.padding = '10px';
+                        detailsElement.style.borderRadius = '8px';
+                        detailsElement.style.fontSize = '13px';
+                        detailsElement.style.lineHeight = '1.4';
+                        detailsElement.style.boxShadow = 'inset 0 0 0 1px #e5e7eb';
+
+                        thinkWrapper.appendChild(titleElement);
+                        thinkWrapper.appendChild(detailsElement);
+                    }
+
+
                     chatContainer.insertBefore(thinkWrapper, botMessage);
                     chatContainer.scrollTop = chatContainer.scrollHeight;
 
-                    saveThinkChunks(); 
-                    
-                    // add think to chat history
+                    saveThinkChunks();
+
                     chatHistory.push({
                         sender: 'assistant',
                         type: 'think',
@@ -1717,59 +1772,114 @@ function createOverlay(featureName) {
                         detailsHtml,
                         timestamp: new Date().getTime()
                     });
-                
+
                     saveChatHistoryToStorage();
                 },
-                // onMessageChunk: handle each chunk of the response
+
+                // onMessageChunk
                 (chunk) => {
-                    // Remove typing indicator if this is the first chunk
                     if (!responseText) {
                         botMessage.innerHTML = '';
                     }
-
-                    // Add this chunk to the response
-                    console.log(chunk);
                     responseText += chunk;
                     botMessage.textContent = responseText;
-
-                    // Scroll to bottom
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 },
-                // onComplete: when the response is complete
-                () => {
-                    // Convert final markdown responseText to HTML
-                    const finalHtml = renderMarkdownToHtml(responseText);
 
-                    // Update the bot's message content in the UI
+                // onComplete
+                () => {
+                    const finalHtml = renderMarkdownToHtml(responseText);
                     botMessage.innerHTML = finalHtml;
-                    // Update chat history with the complete response
+
                     chatHistory.push({
                         sender: 'assistant',
                         message: responseText,
                         timestamp: new Date().getTime()
                     });
 
-                    // Save chat history
+                    const thinkingBlocks = Array.from(document.querySelectorAll('.thinking-temp'));
+                    if (thinkingBlocks.length > 0) {
+                        const container = document.createElement('div');
+
+                        const header = document.createElement('div');
+                        header.style.display = 'flex';
+                        header.style.alignItems = 'center';
+                        header.style.gap = '8px';
+                        header.style.fontWeight = 'bold';
+                        header.style.padding = '8px 12px';
+                        header.style.color = '#1f2937';
+                        header.style.userSelect = 'none';
+                        header.style.cursor = 'pointer';
+
+                        const arrowIcon = document.createElement('span');
+                        arrowIcon.textContent = '▶';
+
+                        const headerText = document.createElement('span');
+                        headerText.textContent = '🧠 Thought process';
+
+                        header.appendChild(arrowIcon);
+                        header.appendChild(headerText);
+
+                        const inner = document.createElement('div');
+                        inner.style.display = 'none';
+                        inner.style.padding = '8px 12px';
+
+                        thinkingBlocks.forEach(wrapper => {
+                            const children = wrapper.children;
+                            const maybeDetails = children[1];
+
+                            if (
+                                maybeDetails &&
+                                maybeDetails.tagName === 'DIV' &&
+                                maybeDetails.querySelector('a') === null
+                            ) {
+                                // Ẩn nội dung ban đầu
+                                maybeDetails.style.display = 'none';
+
+                                // Gán lại listener để cho phép mở/đóng
+                                wrapper.style.cursor = 'pointer';
+                                wrapper.addEventListener('click', () => {
+                                    const isVisible = maybeDetails.style.display === 'block';
+                                    maybeDetails.style.display = isVisible ? 'none' : 'block';
+                                });
+                            }
+
+                            wrapper.classList.remove('thinking-temp');
+                            inner.appendChild(wrapper);
+                        });
+
+                        header.addEventListener('click', () => {
+                            const isVisible = inner.style.display === 'block';
+                            inner.style.display = isVisible ? 'none' : 'block';
+                            arrowIcon.textContent = isVisible ? '▼' : '▶';
+                        });
+
+                        container.appendChild(header);
+                        container.appendChild(inner);
+                        chatContainer.insertBefore(container, botMessage);
+                    }
+
                     saveChatHistoryToStorage();
                 },
-                // onError: handle API errors
+
+
+                // onError
                 (error) => {
-                    // Replace typing indicator with error message
                     botMessage.innerHTML = '';
                     botMessage.textContent = `Sorry, I encountered an error: ${error.message || 'Unable to connect to the API'}. Please try again later.`;
                     botMessage.style.color = '#ef4444';
 
-                    // Add to chat history
                     chatHistory.push({
                         sender: 'assistant',
                         message: botMessage.textContent,
                         timestamp: new Date().getTime()
                     });
 
-                    // Save chat history
                     saveChatHistoryToStorage();
                 }
             );
+
+
         }
     };
 
@@ -1814,75 +1924,176 @@ function saveChatHistoryToStorage() {
     }
 }
 
-// Restore chat history to DOM
 function restoreChatHistory(chatContainer) {
-    if (chatHistory.length > 0) {
-        // Clear container first
-        chatContainer.innerHTML = '';
+    if (chatHistory.length === 0) return;
 
-        // Add each message
-        chatHistory.forEach(item => {
-            if (item.type === 'think') {
+    chatContainer.innerHTML = '';
+
+    const groupedMessages = [];
+    let currentGroup = { messages: [], thinks: [] };
+
+    // Nhóm lại theo các block assistant/user và think đi kèm
+    chatHistory.forEach(item => {
+        if (item.type === 'think') {
+            currentGroup.thinks.push(item);
+        } else {
+            if (item.sender === 'assistant') {
+                currentGroup.messages.push(item);
+                groupedMessages.push(currentGroup);
+                currentGroup = { messages: [], thinks: [] };
+            } else {
+                groupedMessages.push({ messages: [item], thinks: [] });
+            }
+        }
+    });
+
+    groupedMessages.forEach(group => {
+        const { messages, thinks } = group;
+
+        if (thinks.length > 0) {
+            const container = document.createElement('div');
+            container.style.marginBottom = '8px';
+
+            // Toggle Header
+            const header = document.createElement('div');
+            header.style.display = 'flex';
+            header.style.alignItems = 'center';
+            header.style.gap = '8px';
+            header.style.fontWeight = 'bold';
+            header.style.padding = '8px 12px';
+            header.style.color = '#1f2937';
+            header.style.userSelect = 'none';
+            header.style.cursor = 'pointer';
+
+            const arrowIcon = document.createElement('span');
+            arrowIcon.textContent = '▶';
+
+            const headerText = document.createElement('span');
+            headerText.textContent = '🧠 Thought process';
+
+            header.appendChild(arrowIcon);
+            header.appendChild(headerText);
+
+            const inner = document.createElement('div');
+            inner.style.display = 'none';
+            inner.style.padding = '8px 12px';
+            inner.style.background = '#f9fafb';
+            inner.style.borderRadius = '8px';
+            inner.style.marginTop = '4px';
+
+            // Render each think block
+            thinks.forEach(item => {
+                const isUrl = item.detailsHtml.startsWith('http');
+
                 const thinkWrapper = document.createElement('div');
-                thinkWrapper.classList.add('think-wrapper');
                 thinkWrapper.style.padding = '8px 12px';
-                thinkWrapper.style.background = '#e5e7eb';
+                thinkWrapper.style.background = '#f3f4f6';
                 thinkWrapper.style.borderRadius = '8px';
                 thinkWrapper.style.marginBottom = '8px';
                 thinkWrapper.style.maxWidth = '70%';
-                thinkWrapper.style.cursor = 'pointer';
                 thinkWrapper.style.color = '#374151';
                 thinkWrapper.style.wordBreak = 'break-word';
-    
+                thinkWrapper.style.fontSize = '14px';
+                thinkWrapper.style.lineHeight = '1.5';
+                thinkWrapper.style.transition = 'background 0.2s ease';
+
                 const titleElement = document.createElement('div');
-                titleElement.classList.add('think-title');
-                titleElement.style.fontWeight = 'bold';
-                titleElement.textContent = item.title;
-    
-                const detailsElement = document.createElement('div');
-                detailsElement.classList.add('think-details');
-                detailsElement.innerHTML = item.detailsHtml;
-                detailsElement.style.display = 'none';
-                detailsElement.style.marginTop = '6px';
-                detailsElement.style.color = '#6b7280';
-    
-                thinkWrapper.appendChild(titleElement);
-                thinkWrapper.appendChild(detailsElement);
-    
-                thinkWrapper.addEventListener('click', () => {
-                    const isVisible = detailsElement.style.display === 'block';
-                    detailsElement.style.display = isVisible ? 'none' : 'block';
-                });
-    
-                chatContainer.appendChild(thinkWrapper);
-            }
-            else {
-                const messageElement = document.createElement('div');
-                messageElement.style.padding = '12px 16px';
-                messageElement.style.borderRadius = '8px';
-                messageElement.style.marginBottom = '12px';
-                messageElement.style.maxWidth = '80%';
-                messageElement.style.wordBreak = 'break-word';
+                titleElement.style.fontWeight = '600';
+                titleElement.style.marginBottom = '4px';
 
-                if (item.sender === 'user') {
-                    messageElement.style.background = '#e4e4e7';
-                    messageElement.style.marginLeft = 'auto';
+                if (isUrl) {
+                    const token = item.detailsHtml.split("/").at(-1);
+                    titleElement.textContent = `🔍 Getting information from report: ${token}`;
+
+                    const reportBox = document.createElement('div');
+                    reportBox.style.padding = '10px';
+                    reportBox.style.background = '#ffffff';
+                    reportBox.style.border = '1px solid #d1d5db';
+                    reportBox.style.borderRadius = '6px';
+                    reportBox.style.marginTop = '6px';
+                    reportBox.style.color = '#111827';
+                    reportBox.style.fontSize = '13px';
+
+                    reportBox.innerHTML = `
+            <a href="${item.detailsHtml}" target="_blank" style="color:#3b82f6;word-break:break-all; text-decoration: underline;">${item.detailsHtml}</a>
+        `;
+
+                    thinkWrapper.appendChild(titleElement);
+                    thinkWrapper.appendChild(reportBox);
                 } else {
-                    messageElement.style.background = '#f4f4f5';
-                }
-                
-                message = renderMarkdownToHtml(item.message)
-                messageElement.innerHTML = message;
-                chatContainer.appendChild(messageElement);
-            }
-        });
+                    titleElement.textContent = item.title;
 
-        // Scroll to bottom
-        setTimeout(() => {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }, 100);
-    }
+                    const detailsElement = document.createElement('div');
+                    detailsElement.innerHTML = item.detailsHtml;
+                    detailsElement.style.display = 'none';
+                    detailsElement.style.marginTop = '6px';
+                    detailsElement.style.color = '#4b5563';
+                    detailsElement.style.background = '#ffffff';
+                    detailsElement.style.padding = '8px';
+                    detailsElement.style.borderRadius = '6px';
+                    detailsElement.style.fontSize = '13px';
+                    detailsElement.style.boxShadow = 'inset 0 0 0 1px #e5e7eb';
+
+                    thinkWrapper.style.cursor = 'pointer';
+                    thinkWrapper.addEventListener('click', () => {
+                        const isVisible = detailsElement.style.display === 'block';
+                        detailsElement.style.display = isVisible ? 'none' : 'block';
+                    });
+
+                    thinkWrapper.appendChild(titleElement);
+                    thinkWrapper.appendChild(detailsElement);
+                }
+
+                inner.appendChild(thinkWrapper);
+            });
+
+
+            // Toggle logic
+            header.addEventListener('click', () => {
+                const isVisible = inner.style.display === 'block';
+                inner.style.display = isVisible ? 'none' : 'block';
+                arrowIcon.textContent = isVisible ? '▶' : '▼';
+            });
+
+            container.appendChild(header);
+            container.appendChild(inner);
+            chatContainer.appendChild(container);
+        }
+
+        // Add messages (user or assistant)
+        console.log("messages ======")
+        console.log(messages)
+        messages.forEach(item => {
+            if (!item.message || typeof item.message !== 'string' || item.message.trim() === '') {
+                return; // bỏ qua message rỗng
+            }
+
+            const messageElement = document.createElement('div');
+            messageElement.style.padding = '12px 16px';
+            messageElement.style.borderRadius = '8px';
+            messageElement.style.marginBottom = '12px';
+            messageElement.style.maxWidth = '80%';
+            messageElement.style.wordBreak = 'break-word';
+
+            if (item.sender === 'user') {
+                messageElement.style.background = '#e4e4e7';
+                messageElement.style.marginLeft = 'auto';
+            } else {
+                messageElement.style.background = '#f4f4f5';
+            }
+
+            const message = renderMarkdownToHtml(item.message);
+            messageElement.innerHTML = message;
+
+            chatContainer.appendChild(messageElement);
+        });
+    });
+
+    setTimeout(() => {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }, 100);
 }
+
 
 // Load chat history from storage when page loads
 function loadChatHistoryFromStorage() {
@@ -2848,13 +3059,13 @@ function getVisiblePosts() {
             if (contentDiv) {
                 const contentDivText = contentDiv.innerText.trim();
                 const lines = contentDivText.split('\n').filter(line => line.trim().length > 0);
-            
+
                 const btnContainer = document.createElement('div');
                 btnContainer.style.display = 'flex';
                 btnContainer.style.flexWrap = 'wrap';
                 btnContainer.style.gap = '6px';
                 btnContainer.classList.add('custom-injected-btn-container');
-            
+
                 const maxButtons = Math.min(3, lines.length);
                 for (let i = 0; i < maxButtons; i++) {
                     const line = lines[i].trim();
@@ -2863,10 +3074,10 @@ function getVisiblePosts() {
                     btn.classList.add('custom-injected-btn');
                     btnContainer.appendChild(btn);
                 }
-            
+
                 contentDiv.parentElement.insertBefore(btnContainer, contentDiv);
             }
-            
+
         }
     });
 }
