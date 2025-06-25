@@ -726,40 +726,54 @@ function createOverlay(featureName) {
     overlay.style.minWidth = '520px';
     overlay.style.minHeight = '98vh';
     overlay.style.maxHeight = '98vh';
-    overlay.style.background = '#fafafa';
-    overlay.style.boxShadow = '0 2px 24px rgba(0,0,0,0.18)';
+    overlay.style.background = '#0a0a0a'; // Đổi sang nền đen
+    overlay.style.boxShadow = '0 0 40px rgba(255, 255, 255, 0.05)';
     overlay.style.zIndex = '999999';
     overlay.style.borderRadius = '12px 0 0 12px';
-    overlay.style.border = '1px solid #e4e4e7';
+    overlay.style.border = '1px solid rgba(255,255,255,0.05)';
     overlay.style.display = 'flex';
     overlay.style.flexDirection = 'column';
     overlay.style.transition = 'transform 0.3s cubic-bezier(.4,0,.2,1)';
     overlay.style.transform = 'translateX(0)';
 
+
     // Collapse button
     const collapseBtn = document.createElement('button');
-    collapseBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6"></path></svg>';
+    collapseBtn.textContent = '▶'; // hoặc '➔', '→', tuỳ style bạn thích
+    collapseBtn.style.color = 'white'; // đảm bảo màu trắng
+    collapseBtn.style.fontSize = '18px';
+    collapseBtn.style.fontWeight = 'bold';
+
     collapseBtn.style.position = 'absolute';
     collapseBtn.style.left = '-32px';
     collapseBtn.style.top = '24px';
     collapseBtn.style.width = '32px';
     collapseBtn.style.height = '32px';
-    collapseBtn.style.background = '#fafafa';
-    collapseBtn.style.border = '1px solid #e4e4e7';
-    collapseBtn.style.borderRadius = '16px';
-    collapseBtn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+    collapseBtn.style.background = '#0f0f0f';
+    collapseBtn.style.border = '1px solid #2a2a2a';
+    collapseBtn.style.borderRadius = '50%';
+    collapseBtn.style.boxShadow = '0 0 6px rgba(100, 100, 255, 0.3)';
     collapseBtn.style.cursor = 'pointer';
+    collapseBtn.style.display = 'flex';
+    collapseBtn.style.alignItems = 'center';
+    collapseBtn.style.justifyContent = 'center';
     collapseBtn.title = 'Collapse';
+    collapseBtn.style.transition = 'transform 0.3s ease, box-shadow 0.2s ease';
+
+    collapseBtn.onmouseenter = () => {
+        collapseBtn.style.boxShadow = '0 0 10px rgba(140, 140, 255, 0.4)';
+    };
+    collapseBtn.onmouseleave = () => {
+        collapseBtn.style.boxShadow = '0 0 6px rgba(100, 100, 255, 0.3)';
+    };
     collapseBtn.onclick = () => {
-        if (overlay.style.transform === 'translateX(0px)') {
-            overlay.style.transform = 'translateX(100%)';
-            collapseBtn.title = 'Expand';
-        } else {
-            overlay.style.transform = 'translateX(0px)';
-            collapseBtn.title = 'Collapse';
-        }
+        const isCollapsed = overlay.style.transform === 'translateX(0px)';
+        overlay.style.transform = isCollapsed ? 'translateX(100%)' : 'translateX(0px)';
+        collapseBtn.title = isCollapsed ? 'Expand' : 'Collapse';
+        collapseBtn.textContent = isCollapsed ? '◀' : '▶'; // chuyển hướng
     };
     overlay.appendChild(collapseBtn);
+
 
     // Create chat interface
     const content = document.createElement('div');
@@ -768,19 +782,22 @@ function createOverlay(featureName) {
     content.style.display = 'flex';
     content.style.flexDirection = 'column';
     content.style.height = '100%';
+    content.style.background = '#0a0a0a'; // nền tối
 
     // Header for overlay
     const header = document.createElement('div');
     header.style.padding = '16px 20px';
-    header.style.borderBottom = '1px solid #e4e4e7';
+    header.style.borderBottom = '1px solid rgba(255, 255, 255, 0.05)';
     header.style.display = 'flex';
     header.style.alignItems = 'center';
     header.style.justifyContent = 'space-between';
+    header.style.background = '#111'; // header tone tối
 
     // Overlay title
     const title = document.createElement('div');
     title.style.fontSize = '18px';
     title.style.fontWeight = 'bold';
+    title.style.color = '#f5f5f5'; // chữ trắng
     title.textContent = featureName ? `${featureName}` : 'Chat with Cybera';
     header.appendChild(title);
 
@@ -792,7 +809,12 @@ function createOverlay(featureName) {
 
     // Clear history button
     const clearHistoryBtn = document.createElement('button');
-    clearHistoryBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>';
+    clearHistoryBtn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 6h18"></path>
+    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+    </svg>`;
     clearHistoryBtn.style.background = 'none';
     clearHistoryBtn.style.border = 'none';
     clearHistoryBtn.style.cursor = 'pointer';
@@ -811,7 +833,11 @@ function createOverlay(featureName) {
 
     // Close button
     const closeBtn = document.createElement('button');
-    closeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-12 12"></path><path d="M6 6l12 12"></path></svg>';
+    closeBtn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 6l-12 12"></path>
+    <path d="M6 6l12 12"></path>
+    </svg>`;
     closeBtn.style.background = 'none';
     closeBtn.style.border = 'none';
     closeBtn.style.cursor = 'pointer';
@@ -834,16 +860,19 @@ function createOverlay(featureName) {
     chatContainer.style.flex = '1';
     chatContainer.style.overflowY = 'auto';
     chatContainer.style.padding = '20px';
+    chatContainer.style.background = '#0a0a0a'; // nền đen
 
     // Add welcome message if there's no chat history
     if (chatHistory.length === 0) {
         const welcomeMessage = document.createElement('div');
         welcomeMessage.style.padding = '12px 16px';
-        welcomeMessage.style.background = '#f4f4f5';
+        welcomeMessage.style.background = '#1a1a1a'; // bong bóng chat tone đen nhạt
         welcomeMessage.style.borderRadius = '8px';
         welcomeMessage.style.marginBottom = '12px';
         welcomeMessage.style.maxWidth = '80%';
         welcomeMessage.style.wordBreak = 'break-word';
+        welcomeMessage.style.color = '#f1f1f1'; // chữ trắng nhẹ
+        welcomeMessage.style.boxShadow = '0 1px 4px rgba(255, 255, 255, 0.03)';
 
         if (featureName) {
             welcomeMessage.textContent = `Welcome to ${featureName}. How can I help you?`;
@@ -868,19 +897,20 @@ function createOverlay(featureName) {
     // Input box for chat
     const inputContainer = document.createElement('div');
     inputContainer.style.padding = '16px';
-    inputContainer.style.borderTop = '1px solid #e4e4e7';
+    inputContainer.style.borderTop = '1px solid #1f1f1f'; // viền tối
     inputContainer.style.display = 'flex';
     inputContainer.style.flexDirection = 'column';
     inputContainer.style.gap = '10px';
+    inputContainer.style.background = '#0a0a0a'; // nền input
 
     // Create container for suggested questions - Now inside inputContainer for closer positioning
     const suggestionsContainer = document.createElement('div');
-    suggestionsContainer.id = 'suggestions-container';
     suggestionsContainer.style.display = 'flex';
-    suggestionsContainer.style.flexDirection = 'column';
+    suggestionsContainer.style.flexDirection = 'row'; // giống như ảnh là các nút nằm ngang
+    suggestionsContainer.style.flexWrap = 'wrap'; // cho xuống dòng nếu chật
     suggestionsContainer.style.gap = '8px';
     suggestionsContainer.style.marginBottom = '8px';
-    suggestionsContainer.style.alignItems = 'flex-start'; // Align to the left
+    suggestionsContainer.style.alignItems = 'center'; // đẹp hơn
 
     // Create only 2 suggested questions
     const suggestedQuestions = [
@@ -891,29 +921,50 @@ function createOverlay(featureName) {
     suggestedQuestions.forEach(questionText => {
         const suggestedQuestion = document.createElement('div');
         suggestedQuestion.className = 'suggested-question';
-        suggestedQuestion.style.padding = '8px 16px'; // Smaller padding
-        suggestedQuestion.style.background = '#18181b'; // Dark background
-        suggestedQuestion.style.color = '#ffffff'; // White text
-        suggestedQuestion.style.borderRadius = '16px'; // Rounded corners
-        suggestedQuestion.style.maxWidth = '80%'; // Smaller width
+        suggestedQuestion.style.padding = '8px 16px';
+        suggestedQuestion.style.background = '#1f1f1f';              // tone đen sang hơn
+        suggestedQuestion.style.color = '#e4e4e7';                   // text xám sáng
+        suggestedQuestion.style.borderRadius = '16px';
+        suggestedQuestion.style.maxWidth = '80%';
         suggestedQuestion.style.wordBreak = 'break-word';
         suggestedQuestion.style.cursor = 'pointer';
-        suggestedQuestion.style.border = 'none'; // No border
-        suggestedQuestion.style.fontSize = '14px'; // Smaller font size
+        suggestedQuestion.style.border = '1px solid #2a2a2a';        // thêm đường viền nhẹ
+        suggestedQuestion.style.fontSize = '14px';
+        suggestedQuestion.style.transition = 'background 0.2s ease';
+        suggestedQuestion.style.boxShadow = '0 1px 2px rgba(0,0,0,0.3)';
+
+
+        suggestedQuestion.onmouseenter = () => {
+            suggestedQuestion.style.background = '#2a2a2a';
+        };
+
+        suggestedQuestion.onmouseleave = () => {
+            suggestedQuestion.style.background = '#1f1f1f';
+        };
 
         suggestedQuestion.textContent = questionText;
 
         // Add click event to use this suggestion
         suggestedQuestion.onclick = () => {
+            loggedIn = false;
+            if (!loggedIn) {
+                // Chưa login => mở auth.html
+                createLoginModalInsideOverlay();
+                return;
+            }
+
             // Create user message
             const userMessage = document.createElement('div');
             userMessage.style.padding = '12px 16px';
-            userMessage.style.background = '#e4e4e7';
+            userMessage.style.background = 'linear-gradient(to top, #2f2f2f, #000000)'; // gradient xám tối -> đen
+            userMessage.style.color = '#e0e0e0';        // trắng thiên xám
             userMessage.style.borderRadius = '8px';
             userMessage.style.marginBottom = '12px';
             userMessage.style.maxWidth = '80%';
             userMessage.style.wordBreak = 'break-word';
             userMessage.style.marginLeft = 'auto';
+            userMessage.style.fontSize = '14px';
+            userMessage.style.lineHeight = '1.5';
             userMessage.textContent = questionText;
 
             const chatContainer = document.getElementById('chat-messages-container');
@@ -938,31 +989,34 @@ function createOverlay(featureName) {
             // Add a bot message placeholder
             const botMessage = document.createElement('div');
             botMessage.style.padding = '12px 16px';
-            botMessage.style.background = '#f4f4f5';
+            botMessage.style.background = 'linear-gradient(to top, #1f1f1f, #000000)';  // gradient xám tối hơn -> đen
+            botMessage.style.color = '#e0e0e0';
             botMessage.style.borderRadius = '8px';
             botMessage.style.marginBottom = '12px';
             botMessage.style.maxWidth = '80%';
             botMessage.style.wordBreak = 'break-word';
+            botMessage.style.fontSize = '14px';
+            botMessage.style.lineHeight = '1.5';
 
             // Add <style> for bouncing animation
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes bounce {
-                0%, 80%, 100% {
-                    transform: translateY(0);
-                }
-                40% {
-                    transform: translateY(-8px);
-                }
+                    0%, 80%, 100% {
+                        transform: translateY(0);
+                    }
+                    40% {
+                        transform: translateY(-8px);
+                    }
                 }
                 .typing-indicator span {
-                display: inline-block;
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                background-color: #666;
-                margin: 0 2px;
-                animation: bounce 0.6s infinite ease-in-out;
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    background-color: #a1a1aa; /* màu dot nhạt hơn nền một chút */
+                    margin: 0 2px;
+                    animation: bounce 0.6s infinite ease-in-out;
                 }
             `;
             document.head.appendChild(style);
@@ -1041,14 +1095,26 @@ function createOverlay(featureName) {
                     // onThinkChunk
                     ({ title, detailsHtml }) => {
                         const thinkWrapper = document.createElement('div');
-                        thinkWrapper.style.padding = '8px 12px';
-                        thinkWrapper.style.background = '#e5e7eb';
-                        thinkWrapper.style.borderRadius = '8px';
-                        thinkWrapper.style.marginBottom = '8px';
-                        thinkWrapper.style.maxWidth = '70%';
+                        thinkWrapper.style.padding = '10px 16px';
+                        thinkWrapper.style.background = '#2f3136';           // xám đậm tối mờ
+                        thinkWrapper.style.borderRadius = '20px';            // bo tròn lớn
+                        thinkWrapper.style.marginBottom = '10px';
+                        // thinkWrapper.style.maxWidth = '70%';
                         thinkWrapper.style.cursor = 'pointer';
-                        thinkWrapper.style.color = '#374151'; // màu xám đậm
+                        thinkWrapper.style.color = '#b0b3b8';                 // màu xám nhạt
                         thinkWrapper.style.wordBreak = 'break-word';
+                        thinkWrapper.style.userSelect = 'none';
+                        thinkWrapper.style.transition = 'background-color 0.25s ease, box-shadow 0.25s ease';
+
+                        // Glow nhẹ khi hover
+                        thinkWrapper.addEventListener('mouseenter', () => {
+                        thinkWrapper.style.background = '#3b3e44';
+                        thinkWrapper.style.boxShadow = '0 0 8px 2px rgba(58, 123, 255, 0.4)';
+                        });
+                        thinkWrapper.addEventListener('mouseleave', () => {
+                        thinkWrapper.style.background = '#2f3136';
+                        thinkWrapper.style.boxShadow = 'none';
+                        });
 
                         const titleElement = document.createElement('div');
                         titleElement.style.fontWeight = 'bold';
@@ -1128,12 +1194,15 @@ function createOverlay(featureName) {
                 // Create user message with the query
                 const userMessage = document.createElement('div');
                 userMessage.style.padding = '12px 16px';
-                userMessage.style.background = '#e4e4e7';
+                userMessage.style.background = 'linear-gradient(to top, #2f2f2f, #000000)'; // gradient xám tối -> đen
+                userMessage.style.color = '#e0e0e0';        // trắng thiên xám
                 userMessage.style.borderRadius = '8px';
                 userMessage.style.marginBottom = '12px';
                 userMessage.style.maxWidth = '80%';
                 userMessage.style.wordBreak = 'break-word';
                 userMessage.style.marginLeft = 'auto';
+                userMessage.style.fontSize = '14px';
+                userMessage.style.lineHeight = '1.5';
                 userMessage.textContent = questionText;
                 chatContainer.appendChild(userMessage);
 
@@ -1156,11 +1225,14 @@ function createOverlay(featureName) {
                 // Create placeholder for bot response
                 const botMessage = document.createElement('div');
                 botMessage.style.padding = '12px 16px';
-                botMessage.style.background = '#f4f4f5';
+                botMessage.style.background = 'linear-gradient(to top, #1f1f1f, #000000)';  // gradient xám tối hơn -> đen
+                botMessage.style.color = '#e0e0e0';
                 botMessage.style.borderRadius = '8px';
                 botMessage.style.marginBottom = '12px';
                 botMessage.style.maxWidth = '80%';
                 botMessage.style.wordBreak = 'break-word';
+                botMessage.style.fontSize = '14px';
+                botMessage.style.lineHeight = '1.5';
                 botMessage.textContent = "Taking screenshot to analyze...";
                 chatContainer.appendChild(botMessage);
 
@@ -1467,14 +1539,26 @@ function createOverlay(featureName) {
                     // onThinkChunk
                     ({ title, detailsHtml }) => {
                         const thinkWrapper = document.createElement('div');
-                        thinkWrapper.style.padding = '8px 12px';
-                        thinkWrapper.style.background = '#e5e7eb';
-                        thinkWrapper.style.borderRadius = '8px';
-                        thinkWrapper.style.marginBottom = '8px';
-                        thinkWrapper.style.maxWidth = '70%';
+                        thinkWrapper.style.padding = '10px 16px';
+                        thinkWrapper.style.background = '#2f3136';           // xám đậm tối mờ
+                        thinkWrapper.style.borderRadius = '20px';            // bo tròn lớn
+                        thinkWrapper.style.marginBottom = '10px';
+                        // thinkWrapper.style.maxWidth = '70%';
                         thinkWrapper.style.cursor = 'pointer';
-                        thinkWrapper.style.color = '#374151'; // màu xám đậm
+                        thinkWrapper.style.color = '#b0b3b8';                 // màu xám nhạt
                         thinkWrapper.style.wordBreak = 'break-word';
+                        thinkWrapper.style.userSelect = 'none';
+                        thinkWrapper.style.transition = 'background-color 0.25s ease, box-shadow 0.25s ease';
+
+                        // Glow nhẹ khi hover
+                        thinkWrapper.addEventListener('mouseenter', () => {
+                        thinkWrapper.style.background = '#3b3e44';
+                        thinkWrapper.style.boxShadow = '0 0 8px 2px rgba(58, 123, 255, 0.4)';
+                        });
+                        thinkWrapper.addEventListener('mouseleave', () => {
+                        thinkWrapper.style.background = '#2f3136';
+                        thinkWrapper.style.boxShadow = 'none';
+                        });
 
                         const titleElement = document.createElement('div');
                         titleElement.style.fontWeight = 'bold';
@@ -1571,29 +1655,71 @@ function createOverlay(featureName) {
     const inputRowContainer = document.createElement('div');
     inputRowContainer.style.display = 'flex';
     inputRowContainer.style.alignItems = 'center';
+    inputRowContainer.style.padding = '12px 16px';
+    inputRowContainer.style.background = 'rgba(15, 15, 15, 0.85)'; // nền đen bóng mờ
+    inputRowContainer.style.borderRadius = '20px';               // bo tròn lớn
+    inputRowContainer.style.boxShadow = '0 0 10px 2px rgba(58, 123, 255, 0.3)'; // glow nhẹ
+
 
     const inputBox = document.createElement('input');
     inputBox.type = 'text';
     inputBox.placeholder = 'Type your message here...';
     inputBox.style.flex = '1';
     inputBox.style.padding = '12px 16px';
-    inputBox.style.border = '1px solid #e4e4e7';
-    inputBox.style.borderRadius = '8px';
+    inputBox.style.border = 'none';
     inputBox.style.outline = 'none';
+    inputBox.style.borderRadius = '16px';  // bo tròn lớn
+    inputBox.style.background = 'rgba(30, 30, 30, 0.6)'; // nền trong mờ
+    inputBox.style.color = '#ccc'; // chữ sáng
+    inputBox.style.fontSize = '14px';
+    inputBox.style.caretColor = '#ccc'; // con trỏ trắng xám
+    inputBox.style.transition = 'background-color 0.25s ease';
+    inputBox.style.boxShadow = '0 2px 8px rgba(255, 255, 255, 0.1)'; // bóng trắng xám nhẹ
+
+    // Hover/focus hiệu ứng bóng sáng hơn
+    inputBox.addEventListener('focus', () => {
+        inputBox.style.boxShadow = '0 2px 12px rgba(255, 255, 255, 0.2)';
+    });
+    inputBox.addEventListener('blur', () => {
+        inputBox.style.boxShadow = '0 2px 8px rgba(255, 255, 255, 0.1)';
+    });
+
+    // Placeholder (không áp dụng được bằng setAttribute cho ::placeholder, nên dùng CSS class nếu cần đồng bộ rộng hơn)
+    inputBox.placeholder = ''; // clear trước
+    inputBox.setAttribute('placeholder', 'Type your message here...');
+
+
+    // Placeholder style (tùy trình duyệt, tạo style giả sử dụng attribute)
+    inputBox.setAttribute('style', inputBox.getAttribute('style') + `
+    ::placeholder { color: #888888; }
+    `);
 
     const sendButton = document.createElement('button');
-    sendButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14l11 -11"></path><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"></path></svg>';
-    sendButton.style.background = '#7e22ce';
-    sendButton.style.border = 'none';
+    sendButton.textContent = '↑'; // icon hướng lên
+    sendButton.style.background = 'radial-gradient(circle, #000000 0%, #1a1a1a 60%, #e5e5e5 100%)'; // tối tâm, sáng viền
+    sendButton.style.border = '1px solid #d4d4d8'; // viền trắng xám
     sendButton.style.borderRadius = '50%';
-    sendButton.style.width = '40px';
-    sendButton.style.height = '40px';
+    sendButton.style.width = '44px';
+    sendButton.style.height = '44px';
     sendButton.style.display = 'flex';
     sendButton.style.alignItems = 'center';
     sendButton.style.justifyContent = 'center';
-    sendButton.style.marginLeft = '8px';
+    sendButton.style.marginLeft = '12px';
     sendButton.style.cursor = 'pointer';
-    sendButton.style.color = 'white';
+    sendButton.style.color = '#f4f4f5'; // chữ trắng nhẹ
+    sendButton.style.fontWeight = 'bold';
+    sendButton.style.fontSize = '18px';
+    sendButton.style.boxShadow = '0 4px 12px rgba(255, 255, 255, 0.1)';
+    sendButton.style.transition = 'box-shadow 0.3s ease';
+    
+    sendButton.addEventListener('mouseenter', () => {
+        sendButton.style.boxShadow = '0 6px 20px rgba(255, 255, 255, 0.25)';
+    });
+    sendButton.addEventListener('mouseleave', () => {
+        sendButton.style.boxShadow = '0 4px 12px rgba(255, 255, 255, 0.1)';
+    });
+    
+
 
     inputRowContainer.appendChild(inputBox);
     inputRowContainer.appendChild(sendButton);
@@ -1616,12 +1742,15 @@ function createOverlay(featureName) {
             // Add user message
             const userMessage = document.createElement('div');
             userMessage.style.padding = '12px 16px';
-            userMessage.style.background = '#e4e4e7';
+            userMessage.style.background = 'linear-gradient(to top, #2f2f2f, #000000)'; // gradient xám tối -> đen
+            userMessage.style.color = '#e0e0e0';        // trắng thiên xám
             userMessage.style.borderRadius = '8px';
             userMessage.style.marginBottom = '12px';
             userMessage.style.maxWidth = '80%';
             userMessage.style.wordBreak = 'break-word';
             userMessage.style.marginLeft = 'auto';
+            userMessage.style.fontSize = '14px';
+            userMessage.style.lineHeight = '1.5';
             userMessage.textContent = message;
             chatContainer.appendChild(userMessage);
 
@@ -1644,11 +1773,14 @@ function createOverlay(featureName) {
             // Add a placeholder for the bot response
             const botMessage = document.createElement('div');
             botMessage.style.padding = '12px 16px';
-            botMessage.style.background = '#f4f4f5';
+            botMessage.style.background = 'linear-gradient(to top, #1f1f1f, #000000)';  // gradient xám tối hơn -> đen
+            botMessage.style.color = '#e0e0e0';
             botMessage.style.borderRadius = '8px';
             botMessage.style.marginBottom = '12px';
             botMessage.style.maxWidth = '80%';
             botMessage.style.wordBreak = 'break-word';
+            botMessage.style.fontSize = '14px';
+            botMessage.style.lineHeight = '1.5';
 
             // Add <style> for bouncing animation
             const style = document.createElement('style');
@@ -1704,15 +1836,26 @@ function createOverlay(featureName) {
                 ({ title, detailsHtml, type }) => {
                     const thinkWrapper = document.createElement('div');
                     thinkWrapper.classList.add('thinking-temp');
-                    thinkWrapper.style.padding = '10px 14px';
-                    thinkWrapper.style.background = '#f3f4f6';         // nền nhạt hơn, dịu mắt
-                    thinkWrapper.style.borderRadius = '10px';         // bo tròn mềm mại
+                    thinkWrapper.style.padding = '10px 16px';
+                    thinkWrapper.style.background = '#2f3136';           // xám đậm tối mờ
+                    thinkWrapper.style.borderRadius = '20px';            // bo tròn lớn
                     thinkWrapper.style.marginBottom = '10px';
-                    thinkWrapper.style.maxWidth = '70%';
-                    thinkWrapper.style.color = '#374151';              // text màu xám đậm chuẩn
+                    // thinkWrapper.style.maxWidth = '70%';
+                    thinkWrapper.style.cursor = 'pointer';
+                    thinkWrapper.style.color = '#b0b3b8';                 // màu xám nhạt
                     thinkWrapper.style.wordBreak = 'break-word';
-                    thinkWrapper.style.fontSize = '14px';
-                    thinkWrapper.style.lineHeight = '1.5';
+                    thinkWrapper.style.userSelect = 'none';
+                    thinkWrapper.style.transition = 'background-color 0.25s ease, box-shadow 0.25s ease';
+
+                    // Glow nhẹ khi hover
+                    thinkWrapper.addEventListener('mouseenter', () => {
+                    thinkWrapper.style.background = '#3b3e44';
+                    thinkWrapper.style.boxShadow = '0 0 8px 2px rgba(58, 123, 255, 0.4)';
+                    });
+                    thinkWrapper.addEventListener('mouseleave', () => {
+                    thinkWrapper.style.background = '#2f3136';
+                    thinkWrapper.style.boxShadow = 'none';
+                    });
 
                     const titleElement = document.createElement('div');
                     titleElement.style.fontWeight = '600';
@@ -1724,15 +1867,20 @@ function createOverlay(featureName) {
                         const token = link.split("/").at(-1);
                         titleElement.textContent = `🔍 Getting information from report: ${token}`;
 
+                        titleElement.style.color = '#ddd';
+                        titleElement.style.fontWeight = '600';
+                        titleElement.style.marginBottom = '8px';
+
                         const reportBox = document.createElement('div');
-                        reportBox.style.padding = '12px';
-                        reportBox.style.background = '#ffffff';
-                        reportBox.style.border = '1px solid #d1d5db';
-                        reportBox.style.borderRadius = '8px';
+                        reportBox.style.padding = '12px 16px';
+                        reportBox.style.background = 'rgba(15, 15, 15, 0.85)'; // nền đen bóng mờ
+                        reportBox.style.border = '1.5px solid rgba(58, 123, 255, 0.5)'; // viền glow màu xanh dương nhạt
+                        reportBox.style.borderRadius = '16px'; // bo tròn lớn
                         reportBox.style.marginTop = '6px';
-                        reportBox.style.color = '#111827';
+                        reportBox.style.color = '#b0b3b8'; // chữ xám nhạt
                         reportBox.style.fontSize = '13px';
                         reportBox.style.wordBreak = 'break-word';
+                        reportBox.style.boxShadow = '0 0 8px 2px rgba(58, 123, 255, 0.3)'; // glow nhẹ
 
                         reportBox.innerHTML = `
         <a href="${link}" target="_blank" style="color:#3b82f6; text-decoration: underline; word-break: break-word;">
@@ -1746,14 +1894,16 @@ function createOverlay(featureName) {
                         const detailsElement = document.createElement('div');
                         detailsElement.innerHTML = detailsHtml;
                         detailsElement.style.display = 'block';
-                        detailsElement.style.marginTop = '6px';
-                        detailsElement.style.color = '#4b5563';
-                        detailsElement.style.background = '#ffffff';
-                        detailsElement.style.padding = '10px';
-                        detailsElement.style.borderRadius = '8px';
+                        detailsElement.style.marginTop = '8px';
+                        detailsElement.style.color = '#b0b3b8';                         // chữ xám nhạt
+                        detailsElement.style.background = 'rgba(15, 15, 15, 0.85)';     // nền đen bóng mờ trong suốt
+                        detailsElement.style.padding = '12px 16px';
+                        detailsElement.style.borderRadius = '16px';                      // bo tròn lớn
                         detailsElement.style.fontSize = '13px';
-                        detailsElement.style.lineHeight = '1.4';
-                        detailsElement.style.boxShadow = 'inset 0 0 0 1px #e5e7eb';
+                        detailsElement.style.lineHeight = '1.5';
+                        detailsElement.style.boxShadow = 'inset 0 0 12px 1px rgba(58, 123, 255, 0.3)';  // glow nhẹ inset
+                        detailsElement.style.wordBreak = 'break-word';
+                        detailsElement.style.userSelect = 'text';    
 
                         thinkWrapper.appendChild(titleElement);
                         thinkWrapper.appendChild(detailsElement);
@@ -1800,29 +1950,53 @@ function createOverlay(featureName) {
                     const thinkingBlocks = Array.from(document.querySelectorAll('.thinking-temp'));
                     if (thinkingBlocks.length > 0) {
                         const container = document.createElement('div');
+                        container.style.background = 'rgba(15, 15, 15, 0.9)';     // nền đen bóng mờ
+                        container.style.borderRadius = '16px';                     // bo tròn lớn
+                        container.style.boxShadow = '0 0 10px 2px rgba(58, 123, 255, 0.4)'; // glow nhẹ
+                        container.style.marginBottom = '16px';
+                        container.style.overflow = 'hidden';
+                        container.style.userSelect = 'none';
 
                         const header = document.createElement('div');
+                        header.style.maxWidth = '70%';
                         header.style.display = 'flex';
                         header.style.alignItems = 'center';
-                        header.style.gap = '8px';
-                        header.style.fontWeight = 'bold';
-                        header.style.padding = '8px 12px';
-                        header.style.color = '#1f2937';
-                        header.style.userSelect = 'none';
+                        header.style.gap = '10px';
+                        header.style.fontWeight = '600';
+                        header.style.padding = '12px 16px';
+                        header.style.color = '#b0b3b8';                 // chữ xám nhạt
                         header.style.cursor = 'pointer';
+                        header.style.transition = 'background-color 0.3s ease';
+
+                        header.addEventListener('mouseenter', () => {
+                            header.style.background = 'rgba(58, 123, 255, 0.15)';
+                        });
+                        header.addEventListener('mouseleave', () => {
+                            header.style.background = 'transparent';
+                        });
 
                         const arrowIcon = document.createElement('span');
                         arrowIcon.textContent = '▶';
+                        arrowIcon.style.display = 'inline-block';
+                        arrowIcon.style.transition = 'transform 0.3s ease';
+                        arrowIcon.style.color = 'white';  // tím nhẹ nổi bật
 
                         const headerText = document.createElement('span');
                         headerText.textContent = '🧠 Thought process';
+                        headerText.style.userSelect = 'none';
 
                         header.appendChild(arrowIcon);
                         header.appendChild(headerText);
 
                         const inner = document.createElement('div');
+                        inner.style.maxWidth = '70%';
                         inner.style.display = 'none';
-                        inner.style.padding = '8px 12px';
+                        inner.style.padding = '12px 16px';
+                        inner.style.color = '#ccc';
+                        inner.style.fontSize = '14px';
+                        inner.style.lineHeight = '1.5';
+                        inner.style.borderTop = '1px solid rgba(255, 255, 255, 0.1)';
+                        inner.style.userSelect = 'text';
 
                         thinkingBlocks.forEach(wrapper => {
                             const children = wrapper.children;
@@ -1845,6 +2019,7 @@ function createOverlay(featureName) {
                             }
 
                             wrapper.classList.remove('thinking-temp');
+                            wrapper.style.width = '100%';
                             inner.appendChild(wrapper);
                         });
 
@@ -1956,63 +2131,101 @@ function restoreChatHistory(chatContainer) {
 
             // Toggle Header
             const header = document.createElement('div');
+            header.style.maxWidth = '70%';
             header.style.display = 'flex';
             header.style.alignItems = 'center';
-            header.style.gap = '8px';
-            header.style.fontWeight = 'bold';
-            header.style.padding = '8px 12px';
-            header.style.color = '#1f2937';
+            header.style.gap = '10px';
+            header.style.fontWeight = '600';
+            header.style.padding = '12px 16px';
+            header.style.color = '#b0b3b8';             // chữ xám nhạt
             header.style.userSelect = 'none';
             header.style.cursor = 'pointer';
+            header.style.transition = 'background-color 0.3s ease, box-shadow 0.3s ease';
+            header.style.borderRadius = '16px';         // bo tròn lớn
+
+            // Hover hiệu ứng nhẹ
+            header.addEventListener('mouseenter', () => {
+            header.style.background = 'rgba(58, 123, 255, 0.15)';
+            header.style.boxShadow = '0 0 8px 2px rgba(58, 123, 255, 0.4)';
+            });
+            header.addEventListener('mouseleave', () => {
+            header.style.background = 'transparent';
+            header.style.boxShadow = 'none';
+            });
 
             const arrowIcon = document.createElement('span');
             arrowIcon.textContent = '▶';
+            arrowIcon.style.display = 'inline-block';
+            arrowIcon.style.transition = 'transform 0.3s ease';
+            arrowIcon.style.color = 'white'; // tím nhẹ nổi bật
 
             const headerText = document.createElement('span');
             headerText.textContent = '🧠 Thought process';
+            headerText.style.userSelect = 'none';
+            headerText.style.color = 'white';
 
             header.appendChild(arrowIcon);
             header.appendChild(headerText);
 
             const inner = document.createElement('div');
+            inner.style.maxWidth = '70%';
             inner.style.display = 'none';
-            inner.style.padding = '8px 12px';
-            inner.style.background = '#f9fafb';
-            inner.style.borderRadius = '8px';
-            inner.style.marginTop = '4px';
+            inner.style.padding = '12px 16px';
+            inner.style.background = 'rgba(15, 15, 15, 0.85)'; // nền đen bóng mờ
+            inner.style.borderRadius = '16px';                 // bo tròn lớn
+            inner.style.marginTop = '8px';
+            inner.style.color = '#b0b3b8';                      // chữ xám nhạt
+            inner.style.fontSize = '14px';
+            inner.style.lineHeight = '1.5';
+            inner.style.userSelect = 'text';
+            inner.style.boxShadow = '0 0 10px 2px rgba(58, 123, 255, 0.3)'; // glow nhẹ
 
             // Render each think block
             thinks.forEach(item => {
                 const isUrl = item.detailsHtml.startsWith('http');
 
                 const thinkWrapper = document.createElement('div');
-                thinkWrapper.style.padding = '8px 12px';
-                thinkWrapper.style.background = '#f3f4f6';
-                thinkWrapper.style.borderRadius = '8px';
-                thinkWrapper.style.marginBottom = '8px';
-                thinkWrapper.style.maxWidth = '70%';
-                thinkWrapper.style.color = '#374151';
+                thinkWrapper.style.padding = '12px 18px';
+                thinkWrapper.style.background = '#2f3136';           // nền tối mờ
+                thinkWrapper.style.borderRadius = '20px';            // bo tròn lớn
+                thinkWrapper.style.marginBottom = '12px';
+                // thinkWrapper.style.maxWidth = '70%';
+                thinkWrapper.style.cursor = 'pointer';
+                thinkWrapper.style.color = '#b0b3b8';                 // màu xám nhạt
                 thinkWrapper.style.wordBreak = 'break-word';
-                thinkWrapper.style.fontSize = '14px';
-                thinkWrapper.style.lineHeight = '1.5';
-                thinkWrapper.style.transition = 'background 0.2s ease';
+                thinkWrapper.style.userSelect = 'none';
+                thinkWrapper.style.transition = 'background-color 0.25s ease, box-shadow 0.25s ease';
+                
+                // Glow nhẹ khi hover
+                thinkWrapper.addEventListener('mouseenter', () => {
+                    thinkWrapper.style.background = '#3b3e44';
+                    thinkWrapper.style.boxShadow = '0 0 10px 3px rgba(58, 123, 255, 0.4)';
+                });
+                thinkWrapper.addEventListener('mouseleave', () => {
+                    thinkWrapper.style.background = '#2f3136';
+                    thinkWrapper.style.boxShadow = 'none';
+                });
 
                 const titleElement = document.createElement('div');
                 titleElement.style.fontWeight = '600';
                 titleElement.style.marginBottom = '4px';
+                titleElement.style.color = '#ddd';
 
                 if (isUrl) {
                     const token = item.detailsHtml.split("/").at(-1);
                     titleElement.textContent = `🔍 Getting information from report: ${token}`;
 
                     const reportBox = document.createElement('div');
-                    reportBox.style.padding = '10px';
-                    reportBox.style.background = '#ffffff';
-                    reportBox.style.border = '1px solid #d1d5db';
-                    reportBox.style.borderRadius = '6px';
+                    reportBox.style.padding = '12px 16px';
+                    reportBox.style.background = 'rgba(15, 15, 15, 0.85)';    // nền đen bóng mờ
+                    reportBox.style.border = '1.5px solid rgba(58, 123, 255, 0.5)'; // viền glow xanh nhạt
+                    reportBox.style.borderRadius = '16px';                     // bo tròn lớn
                     reportBox.style.marginTop = '6px';
-                    reportBox.style.color = '#111827';
+                    reportBox.style.color = '#b0b3b8';                          // chữ xám nhạt
                     reportBox.style.fontSize = '13px';
+                    reportBox.style.wordBreak = 'break-word';
+                    reportBox.style.boxShadow = '0 0 8px 2px rgba(58, 123, 255, 0.3)'; // glow nhẹ
+
 
                     reportBox.innerHTML = `
             <a href="${item.detailsHtml}" target="_blank" style="color:#3b82f6;word-break:break-all; text-decoration: underline;">${item.detailsHtml}</a>
@@ -2026,13 +2239,16 @@ function restoreChatHistory(chatContainer) {
                     const detailsElement = document.createElement('div');
                     detailsElement.innerHTML = item.detailsHtml;
                     detailsElement.style.display = 'none';
-                    detailsElement.style.marginTop = '6px';
-                    detailsElement.style.color = '#4b5563';
-                    detailsElement.style.background = '#ffffff';
-                    detailsElement.style.padding = '8px';
-                    detailsElement.style.borderRadius = '6px';
+                    detailsElement.style.marginTop = '8px';
+                    detailsElement.style.color = '#b0b3b8';                     // chữ xám nhạt
+                    detailsElement.style.background = 'rgba(15, 15, 15, 0.85)'; // nền tối mờ
+                    detailsElement.style.padding = '12px 16px';
+                    detailsElement.style.borderRadius = '16px';                 // bo tròn lớn
                     detailsElement.style.fontSize = '13px';
-                    detailsElement.style.boxShadow = 'inset 0 0 0 1px #e5e7eb';
+                    detailsElement.style.lineHeight = '1.5';
+                    detailsElement.style.boxShadow = 'inset 0 0 12px 1px rgba(58, 123, 255, 0.3)';  // glow inset nhẹ
+                    detailsElement.style.wordBreak = 'break-word';
+                    detailsElement.style.userSelect = 'text';
 
                     thinkWrapper.style.cursor = 'pointer';
                     thinkWrapper.addEventListener('click', () => {
@@ -2043,7 +2259,8 @@ function restoreChatHistory(chatContainer) {
                     thinkWrapper.appendChild(titleElement);
                     thinkWrapper.appendChild(detailsElement);
                 }
-
+                
+                thinkWrapper.style.width = '100%';
                 inner.appendChild(thinkWrapper);
             });
 
@@ -2074,12 +2291,16 @@ function restoreChatHistory(chatContainer) {
             messageElement.style.marginBottom = '12px';
             messageElement.style.maxWidth = '80%';
             messageElement.style.wordBreak = 'break-word';
+            messageElement.style.fontSize = '14px';
+            messageElement.style.lineHeight = '1.5';
+            messageElement.style.color = '#e0e0e0'; // chữ trắng thiên xám
+            messageElement.style.background = 'linear-gradient(to top, #2c2c2c, #000000)'; // gradient xám -> đen
 
             if (item.sender === 'user') {
-                messageElement.style.background = '#e4e4e7';
-                messageElement.style.marginLeft = 'auto';
+                messageElement.style.marginLeft = 'auto'; // căn phải
+                messageElement.style.background = 'linear-gradient(to top, #3a3a3a, #000000)'; // xám đậm hơn cho user
             } else {
-                messageElement.style.background = '#f4f4f5';
+                messageElement.style.background = 'linear-gradient(to top, #2c2c2c, #000000)'; // xám đen cho bot
             }
 
             const message = renderMarkdownToHtml(item.message);
@@ -2240,14 +2461,26 @@ function restoreThinkChunks(container) {
     chunks.forEach(({ title, detailsHtml }) => {
         const thinkWrapper = document.createElement('div');
         thinkWrapper.className = 'think-wrapper';
-        thinkWrapper.style.padding = '8px 12px';
-        thinkWrapper.style.background = '#e5e7eb';
-        thinkWrapper.style.borderRadius = '8px';
-        thinkWrapper.style.marginBottom = '8px';
-        thinkWrapper.style.maxWidth = '70%';
+        thinkWrapper.style.padding = '10px 16px';
+        thinkWrapper.style.background = '#2f3136';           // xám đậm tối mờ
+        thinkWrapper.style.borderRadius = '20px';            // bo tròn lớn
+        thinkWrapper.style.marginBottom = '10px';
+        // thinkWrapper.style.maxWidth = '70%';
         thinkWrapper.style.cursor = 'pointer';
-        thinkWrapper.style.color = '#374151';
+        thinkWrapper.style.color = '#b0b3b8';                 // màu xám nhạt
         thinkWrapper.style.wordBreak = 'break-word';
+        thinkWrapper.style.userSelect = 'none';
+        thinkWrapper.style.transition = 'background-color 0.25s ease, box-shadow 0.25s ease';
+
+        // Glow nhẹ khi hover
+        thinkWrapper.addEventListener('mouseenter', () => {
+        thinkWrapper.style.background = '#3b3e44';
+        thinkWrapper.style.boxShadow = '0 0 8px 2px rgba(58, 123, 255, 0.4)';
+        });
+        thinkWrapper.addEventListener('mouseleave', () => {
+        thinkWrapper.style.background = '#2f3136';
+        thinkWrapper.style.boxShadow = 'none';
+        });
 
         const titleElement = document.createElement('div');
         titleElement.className = 'think-title';
@@ -2286,14 +2519,15 @@ function createFloatingButton() {
     floatingButton.style.width = '48px';
     floatingButton.style.height = '48px';
     floatingButton.style.borderRadius = '50%';
-    floatingButton.style.backgroundColor = '#7e22ce';
-    floatingButton.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+    floatingButton.style.background = 'radial-gradient(circle, #000000 0%, #1a1a1a 60%, #e5e5e5 100%)';
+    floatingButton.style.border = '1px solid #d4d4d8';
     floatingButton.style.display = 'flex';
     floatingButton.style.alignItems = 'center';
     floatingButton.style.justifyContent = 'center';
     floatingButton.style.cursor = 'pointer';
+    floatingButton.style.boxShadow = '0 4px 12px rgba(255, 255, 255, 0.1)';
+    floatingButton.style.transition = 'box-shadow 0.3s ease';
     floatingButton.style.zIndex = '999998';
-    floatingButton.style.transition = 'all 0.3s ease';
 
     // Icon for button
     floatingButton.innerHTML = `
@@ -2915,26 +3149,38 @@ function createTagOverlay(text, contentText) {
 
     // Collapse button
     const collapseBtn = document.createElement('button');
-    collapseBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6"></path></svg>';
+    collapseBtn.textContent = '▶'; // hoặc '➔', '→', tuỳ style bạn thích
+    collapseBtn.style.color = 'white'; // đảm bảo màu trắng
+    collapseBtn.style.fontSize = '18px';
+    collapseBtn.style.fontWeight = 'bold';
+
     collapseBtn.style.position = 'absolute';
     collapseBtn.style.left = '-32px';
     collapseBtn.style.top = '24px';
     collapseBtn.style.width = '32px';
     collapseBtn.style.height = '32px';
-    collapseBtn.style.background = '#fafafa';
-    collapseBtn.style.border = '1px solid #e4e4e7';
-    collapseBtn.style.borderRadius = '16px';
-    collapseBtn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+    collapseBtn.style.background = '#0f0f0f';
+    collapseBtn.style.border = '1px solid #2a2a2a';
+    collapseBtn.style.borderRadius = '50%';
+    collapseBtn.style.boxShadow = '0 0 6px rgba(100, 100, 255, 0.3)';
     collapseBtn.style.cursor = 'pointer';
+    collapseBtn.style.display = 'flex';
+    collapseBtn.style.alignItems = 'center';
+    collapseBtn.style.justifyContent = 'center';
     collapseBtn.title = 'Collapse';
+    collapseBtn.style.transition = 'transform 0.3s ease, box-shadow 0.2s ease';
+
+    collapseBtn.onmouseenter = () => {
+        collapseBtn.style.boxShadow = '0 0 10px rgba(140, 140, 255, 0.4)';
+    };
+    collapseBtn.onmouseleave = () => {
+        collapseBtn.style.boxShadow = '0 0 6px rgba(100, 100, 255, 0.3)';
+    };
     collapseBtn.onclick = () => {
-        if (overlay.style.transform === 'translateX(0px)') {
-            overlay.style.transform = 'translateX(100%)';
-            collapseBtn.title = 'Expand';
-        } else {
-            overlay.style.transform = 'translateX(0px)';
-            collapseBtn.title = 'Collapse';
-        }
+        const isCollapsed = overlay.style.transform === 'translateX(0px)';
+        overlay.style.transform = isCollapsed ? 'translateX(100%)' : 'translateX(0px)';
+        collapseBtn.title = isCollapsed ? 'Expand' : 'Collapse';
+        collapseBtn.textContent = isCollapsed ? '◀' : '▶'; // chuyển hướng
     };
     overlay.appendChild(collapseBtn);
 
@@ -3121,3 +3367,162 @@ window.disableObserver = () => {
     window.removeEventListener('scroll', onScroll);
     console.log('🛑 Observer & scroll listener disabled.');
 };
+
+// Model login
+function createLoginModalInsideOverlay() {
+    const overlay = document.getElementById(overlayId);
+    if (!overlay) return;
+
+    if (document.getElementById('login-modal')) return;
+
+    const xIconUrl = chrome.runtime.getURL("x-icon.svg");
+    const galxeIconUrl = chrome.runtime.getURL("galxe-icon.png");
+    const googleIconUrl = chrome.runtime.getURL("gg-icon.png");
+
+    // Tạo modal
+    const modal = document.createElement('div');
+    modal.id = 'login-modal';
+    modal.style.position = 'absolute';
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.width = '400px';
+    modal.style.background = 'radial-gradient(circle, #1a1a1a 0%, #000000 90%)';  // nền đen gradient nhẹ
+    modal.style.borderRadius = '12px';
+    modal.style.padding = '24px';
+    modal.style.boxShadow = '0 0 20px rgba(180,180,180,0.3)'; // bóng trắng xám nhẹ
+    modal.style.zIndex = '9999';
+    modal.style.color = '#ccc'; // chữ xám sáng
+    modal.style.fontFamily = 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif';
+
+    // Ngăn sự kiện click lan ra dimLayer
+    modal.onclick = (e) => {
+        e.stopPropagation();
+    };
+
+    // Nút đóng modal
+    const modalCloseBtn = document.createElement('button');
+    modalCloseBtn.textContent = '×';
+    modalCloseBtn.style.position = 'absolute';
+    modalCloseBtn.style.top = '12px';
+    modalCloseBtn.style.right = '12px';
+    modalCloseBtn.style.fontSize = '24px';
+    modalCloseBtn.style.border = 'none';
+    modalCloseBtn.style.background = 'none';
+    modalCloseBtn.style.color = '#bbb'; // xám nhạt
+    modalCloseBtn.style.cursor = 'pointer';
+    modalCloseBtn.style.transition = 'color 0.25s ease';
+    modalCloseBtn.onmouseenter = () => {
+        modalCloseBtn.style.color = '#fff'; // trắng sáng hơn khi hover
+    };
+    modalCloseBtn.onmouseleave = () => {
+        modalCloseBtn.style.color = '#bbb';
+    };
+    modalCloseBtn.onclick = (e) => {
+        e.stopPropagation();
+        modal.remove();
+        dimLayer.remove();
+    };
+    modal.appendChild(modalCloseBtn);
+
+    // Tiêu đề
+    const title = document.createElement('h2');
+    title.innerHTML = `<span style="color:#bbb">Log in</span> to unlock <strong style="color:#eee">FREE</strong> AI insights`;
+    title.style.marginBottom = '20px';
+    title.style.fontWeight = '600';
+    modal.appendChild(title);
+
+    // Nút "Log in with X"
+    const loginWithXBtn = document.createElement('button');
+    loginWithXBtn.style.display = 'flex';
+    loginWithXBtn.style.alignItems = 'center';
+    loginWithXBtn.style.justifyContent = 'center';
+    loginWithXBtn.style.gap = '8px';
+    loginWithXBtn.style.backgroundColor = '#fff';      // nền trắng
+    loginWithXBtn.style.color = '#111';                // chữ đen đậm
+    loginWithXBtn.style.padding = '12px';
+    loginWithXBtn.style.width = '100%';
+    loginWithXBtn.style.border = '1px solid #ccc';    // viền xám nhạt
+    loginWithXBtn.style.borderRadius = '8px';
+    loginWithXBtn.style.fontSize = '15px';
+    loginWithXBtn.style.fontWeight = '500';
+    loginWithXBtn.style.cursor = 'pointer';
+    loginWithXBtn.style.transition = 'background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease';
+    loginWithXBtn.onmouseenter = () => {
+        loginWithXBtn.style.backgroundColor = '#f0f0f0';   // hover sáng hơn
+        loginWithXBtn.style.borderColor = '#999';
+        loginWithXBtn.style.color = '#000';
+    };
+    loginWithXBtn.onmouseleave = () => {
+        loginWithXBtn.style.backgroundColor = '#fff';
+        loginWithXBtn.style.borderColor = '#ccc';
+        loginWithXBtn.style.color = '#111';
+    };
+
+    // Icon + text
+    const xIcon = document.createElement('img');
+    xIcon.src = xIconUrl;
+    xIcon.style.height = '20px';
+    xIcon.style.filter = 'none';  // bỏ filter trắng để icon gốc hiện đúng màu
+    loginWithXBtn.appendChild(document.createTextNode('Log in with '));
+    loginWithXBtn.appendChild(xIcon);
+
+    modal.appendChild(loginWithXBtn);
+
+
+    // OR divider
+    const orDiv = document.createElement('div');
+    orDiv.textContent = 'OR';
+    orDiv.style.textAlign = 'center';
+    orDiv.style.margin = '20px 0';
+    orDiv.style.color = '#666'; // xám đậm nhạt
+    orDiv.style.fontWeight = '600';
+    modal.appendChild(orDiv);
+
+    // Icon row (Galxe + Google)
+    const iconRow = document.createElement('div');
+    iconRow.style.display = 'flex';
+    iconRow.style.justifyContent = 'center';
+    iconRow.style.gap = '16px';
+
+    // Galxe
+    const galxeIcon = document.createElement('img');
+    galxeIcon.src = galxeIconUrl;
+    galxeIcon.style.height = '32px';
+    galxeIcon.style.cursor = 'pointer';
+    galxeIcon.style.filter = 'brightness(0) invert(1)'; // icon trắng
+    iconRow.appendChild(galxeIcon);
+
+    // Google
+    const googleIcon = document.createElement('img');
+    googleIcon.src = googleIconUrl;
+    googleIcon.style.height = '32px';
+    googleIcon.style.cursor = 'pointer';
+    googleIcon.style.filter = 'brightness(0) invert(1)'; // icon trắng
+    iconRow.appendChild(googleIcon);
+
+    modal.appendChild(iconRow);
+
+    // Terms text
+    const terms = document.createElement('p');
+    terms.style.fontSize = '12px';
+    terms.style.marginTop = '24px';
+    terms.style.textAlign = 'center';
+    terms.style.color = '#666'; // xám đậm nhạt
+    terms.innerHTML = `By signing in, you agree to the <a href="#" style="color:#8b8b8b; text-decoration: underline;">Terms of Service</a> and <a href="#" style="color:#8b8b8b; text-decoration: underline;">Privacy Policy</a>.`;
+    modal.appendChild(terms);
+
+    // Tạo lớp nền mờ phủ overlay
+    const dimLayer = document.createElement('div');
+    dimLayer.id = 'overlay-dim-layer';
+    dimLayer.style.position = 'absolute';
+    dimLayer.style.top = '0';
+    dimLayer.style.left = '0';
+    dimLayer.style.width = '100%';
+    dimLayer.style.height = '100%';
+    dimLayer.style.backgroundColor = 'rgba(20, 20, 20, 0.7)'; // nền mờ tối hơn
+    dimLayer.style.zIndex = '9998';
+
+    overlay.appendChild(dimLayer);
+    overlay.appendChild(modal);
+}

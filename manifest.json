@@ -48,5 +48,31 @@
     ],
     "host_permissions": [
         "<all_urls>"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "x-icon.svg"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        },
+        {
+            "resources": [
+                "gg-icon.png"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        },
+        {
+            "resources": [
+                "galxe-icon.png"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
     ]
 }
